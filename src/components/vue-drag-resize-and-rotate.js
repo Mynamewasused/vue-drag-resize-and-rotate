@@ -321,6 +321,11 @@ export default {
         this.setResize(true)
     },
     mouseDown: function(e) {
+        if (e.shiftKey) {
+          this.keepAspectRatio = true
+        } else {
+          this.keepAspectRatio = false
+        }
         if ((this.dragHandle && !matchesSelector(e.target, this.dragHandle)) || e.target !== this.$el) {
             this.detachEvents()
             this.setActive(false)
@@ -394,6 +399,14 @@ export default {
           var w = parseInt(e.clientX) - parseInt(this.resizeStartX)
           var h = parseInt(e.clientY) - parseInt(this.resizeStartY)
 
+          if (this.keepAspectRatio) {
+            var localAR = this.lastW / this.lastH
+            if (w > h) {
+              h = w / localAR
+            } else {
+              w = h * localAR
+            }
+          } 
           switch (currentStick[0]) {
               case 't':
                   this.localy = parseInt(this.dragStartY) + h;
@@ -441,6 +454,7 @@ export default {
       rotateStartX: 0,
       rotateStartY: 0,
       resizing: false,
+      keepAspectRatio: false
     }
   },
   computed: {
